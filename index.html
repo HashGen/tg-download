@@ -1,1 +1,45 @@
-<!DOCTYPE html><html><head><title>Redirecting...</title></head><body><p>Redirecting...</p><script>const GIST_ID = '180c8f42dc47186f40954dc497d3e08a';async function R(){try{const k=window.location.hash.substring(1);if(!k)throw new Error('No file key.');const r=await fetch(`https://api.github.com/gists/${GIST_ID}`),d=await r.json(),l=d.files['engine.txt'].content;if(!l)throw new Error('Engine URL is empty.');window.location.href=`${l.trim()}/download/${k}`}catch(e){document.body.innerHTML=`<h1>Error: ${e.message}</h1>`}}window.onload=R;</script></body></html>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Redirecting...</title>
+</head>
+<body>
+    <p>Please wait, preparing your link...</p>
+    <script>
+        // --- CONFIGURATION: Aapka Raw Gist URL yahan daal diya gaya hai ---
+        const RAW_GIST_URL = 'https://gist.githubusercontent.com/HashGen/180c8f42dc47186f40954dc497d3e08a/raw/bdc928108e646c4246e535317f515ee98766bc17/engine.txt';
+        // -----------------------------------------------------------
+
+        async function initRedirect() {
+            try {
+                const fileKey = window.location.hash.substring(1);
+                if (!fileKey) {
+                    throw new Error('No file key was provided in the URL.');
+                }
+
+                // Ab hum seedhe Raw URL se text fetch karenge, API se nahi
+                const response = await fetch(RAW_GIST_URL);
+                if (!response.ok) {
+                    throw new Error('Could not fetch the engine configuration.');
+                }
+                
+                const liveEngineUrl = await response.text();
+
+                if (!liveEngineUrl || liveEngineUrl.trim() === '') {
+                    throw new Error('Live engine URL is empty in the configuration.');
+                }
+
+                // User ko live engine par redirect kar do
+                const finalUrl = `${liveEngineUrl.trim()}/download/${fileKey}`;
+                window.location.href = finalUrl;
+
+            } catch (e) {
+                document.body.innerHTML = `<h1>Error</h1><p>${e.message}</p>`;
+            }
+        }
+        
+        window.onload = initRedirect;
+    </script>
+</body>
+</html>
